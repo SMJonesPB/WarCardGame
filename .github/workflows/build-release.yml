@@ -27,12 +27,15 @@ jobs:
         run: |
           pyinstaller war.spec
 
-      - name: Install Inno Setup
-        uses: crazy-max/ghaction-inno-setup@v3
+      - name: Install Inno Setup manually
+        run: |
+          curl -L -o innosetup.exe https://files.jrsoftware.org/is/6/innosetup-6.2.2.exe
+          innosetup.exe /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /SP-
 
       - name: Build installer
         run: |
           "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" WarInstaller.iss
+
 
 
       - name: Create GitHub Release
