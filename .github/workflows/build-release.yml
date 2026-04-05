@@ -1,0 +1,55 @@
+name: Build and Release War
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyinstaller pillow
+
+      - name: Build EXE with PyInstaller
+        run: |
+          pyinstaller war.spec
+
+      - name: Install Inno Setup
+        uses: crazy-max/ghaction-inno-setup@v3
+
+      - name: Build installer
+        run: |
+          "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" WarInstaller.iss
+
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload installer
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            installer/WarSetup.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

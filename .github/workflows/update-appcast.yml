@@ -1,0 +1,52 @@
+name: Update Appcast
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  update-appcast:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Extract release info
+        id: release
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const release = context.payload.release;
+            const tag = release.tag_name.replace(/^v/, "");
+            const asset = release.assets[0];
+            return {
+              version: tag,
+              url: asset.browser_download_url,
+              length: asset.size
+            };
+
+      - name: Update appcast.xml
+        run: |
+          VERSION="${{ steps.release.outputs.version }}"
+          URL="${{ steps.release.outputs.url }}"
+          LENGTH="${{ steps.release.outputs.length }}"
+
+          NEW_ITEM="<item>
+            <title>Version ${VERSION}</title>
+            <enclosure url=\"${URL}\" sparkle:version=\"${VERSION}\" length=\"${LENGTH}\" type=\"application/octet-stream\" />
+          </item>"
+
+          # Insert at top after <channel>
+          awk -v item="$NEW_ITEM" '
+            /<channel>/ { print; print item; next }
+            { print }
+          ' appcast.xml > appcast_new.xml
+
+          mv appcast_new.xml appcast.xml
+
+      - name: Commit updated appcast.xml
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Update appcast for version ${{ steps.release.outputs.version }}"
+          file_pattern: appcast.xml
