@@ -11,7 +11,7 @@ gui_modules = collect_submodules('gui')
 
 # Bundle card images + WinSparkle DLL
 datas = [
-    ('../Card Pictures', 'Card Pictures'),
+    ('Card Pictures', 'Card Pictures'),
 ]
 
 binaries = [
