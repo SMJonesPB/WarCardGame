@@ -1,6 +1,6 @@
 ; WarInstaller.iss
 
-#define MyAppVersion "1.0.0.1"
+#define MyAppVersion "1.0.0"
 AppVersion={#MyAppVersion}
 
 [Setup]

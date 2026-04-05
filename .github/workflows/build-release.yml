@@ -25,7 +25,7 @@ jobs:
 
       - name: Build EXE with PyInstaller
         run: |
-          pyinstaller war.spec
+          pyinstaller --clean --noconfirm war.spec
 
       - name: Install Inno Setup manually
         run: |
