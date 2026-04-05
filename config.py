@@ -8,5 +8,5 @@ def resource_path(relative):
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 IMAGE_FOLDER = resource_path("../Card Pictures")
-APP_VERSION = "1.0.0"
+APP_VERSION = "1.0.1"
 RELEASE_NOTES_URL = "https://raw.githubusercontent.com/SMJonesPB/WarCardGame/release_notes.md"
